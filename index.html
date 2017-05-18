@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="./css/default.css">
+
+    <title>自定义marquee</title>
+    <style>
+        body {
+            margin: 50px auto;
+        }
+
+        a,
+        a:visited,
+        a:link {
+            color: #212121;
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: #666;
+        }
+
+        .ema-news {
+            position: relative;
+            overflow: hidden;
+            margin: 0 auto;
+        }
+
+        .news {
+            position: absolute;
+            top: 0;
+            left: 0;
+            transition: transform 1s ease;
+        }
+
+        .news li {
+            padding: 2px 5px;
+        }
+
+        .news li:nth-child(odd) {
+            background-color: #e0e0e0;
+        }
+
+        .news li>a {
+            display: inline-block;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="ema-news">
+        <ul class="news">
+            <li><a href="##">一只V●ᴥ●V</a></li>
+            <li><a href="##">二只V●ᴥ●V</a></li>
+            <li><a href="##">三只V●ᴥ●V</a></li>
+            <li><a href="##">四只V●ᴥ●V</a></li>
+            <li><a href="##">五只V●ᴥ●V</a></li>
+            <li><a href="##">六只V●ᴥ●V</a></li>
+            <li><a href="##">七只V●ᴥ●V</a></li>
+            <li><a href="##">八只V●ᴥ●V</a></li>
+        </ul>
+    </div>
+</body>
+<script src="./node_modules/jquery/jquery.min.js"></script>
+<script>
+    $(function () {
+        /*判断列表并返回最大高度 宽度值*/
+        var maxMethod = {
+            width: function ($e) {
+                var max_Wid = 0;
+                $e.each(function () {
+                    if ($(this).outerWidth() > max_Wid) {
+                        max_Wid = $(this).outerWidth();
+                    }
+                });
+               return max_Wid
+            },
+            height: function ($e) {
+                var max_Hei = 0;
+                $e.each(function () {
+                    if ($(this).outerHeight() > max_Hei) {
+                        max_Hei = $(this).outerHeight();
+                    }
+                });
+                return max_Hei;
+            }
+        }
+
+        /******************************/
+        var $newsWrap = $('.ema-news'),
+            $news = $newsWrap.find('.news'),
+            $newsLi = $news.find('li'),
+            timer;
+            /*获取li最大高度宽度*/
+        var _ulHei = $news.outerHeight(),
+            _maxWid = maxMethod.width($newsLi),
+            _maxHei = maxMethod.height($newsLi);
+            /*因为有误差 重置宽高*/
+            $newsLi.outerHeight($newsLi.outerHeight()); 
+            $newsLi.outerWidth($newsLi.outerWidth());
+
+        var _speed = 2000,
+            _changeNum = 0;
+        /*重设定容器的最大高度 宽度*/
+        $newsWrap
+            .width(_maxWid)
+            .height(_maxHei);
+
+
+        var play = function () {
+            clearTime(timer);
+            console.log('前:' + _changeNum);
+            _changeNum >= _ulHei - _maxHei ? _changeNum = 0 : _changeNum += _maxHei;
+            console.log('后:' + _changeNum);
+            $news
+                .css({
+                    'transform': 'translateY(' + -_changeNum + 'px)'
+                });
+            setPlay();
+        }
+        var setPlay = function () {
+            timer = setTimeout(function () {
+                play();
+            }, _speed);
+        }
+        /*鼠标移入停止滚动*/
+        var eHover = function () {
+            $newsWrap.hover(function () {
+                clearTime(timer);
+            }, function () {
+                setPlay();
+            });
+        }
+        var clearTime = function (t) {
+            return t ? clearTimeout(t) : '';
+            t = null;
+        }
+
+        setPlay();
+        eHover();
+    });
+
+</script>
+
+</html>
